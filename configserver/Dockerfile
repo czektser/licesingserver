@@ -30,4 +30,4 @@ COPY --from=build ${DEPENDENCY}/META-INF /app/META-INF
 COPY --from=build ${DEPENDENCY}/BOOT-INF/classes /app
 
 #execute the application
-ENTRYPOINT ["java", "-D","spring.cloud.config.uri=http://localhost:"$CONFIGSERVER_PORT,"-cp","app:app/lib/*","com.optimagrowth.configserver.ConfigurationServerApplication"]
+ENTRYPOINT ["java", "-D","server.port=$CONFIGSERVER_PORT","-cp","app:app/lib/*","com.optimagrowth.configserver.ConfigurationServerApplication"]

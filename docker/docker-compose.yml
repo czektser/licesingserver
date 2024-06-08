@@ -32,7 +32,7 @@ services:
        - "${CONFIGSERVER_PORT}:${CONFIGSERVER_PORT}"
     environment:
       ENCRYPT_KEY: "fje83Ki8403Iod87dne7Yjsl3THueh48jfuO9j4U2hf64Lo"
-    entrypoint: ["java","-cp","app:app/lib/*","com.optimagrowth.configserver.ConfigurationServerApplication","-D","spring.cloud.config.uri=http://localhost:${CONFIGSERVER_PORT}"]
+    entrypoint: ["java","-cp","app:app/lib/*","com.optimagrowth.configserver.ConfigurationServerApplication","--server.port=${CONFIGSERVER_PORT}"]
     networks:
       backend:
         aliases:
@@ -49,6 +49,7 @@ services:
       CONFIGSERVER_PORT:   "${CONFIGSERVER_PORT}"
       DATABASESERVER_PORT: "5432"
       ENCRYPT_KEY:       "IMSYMMETRIC"
+    entrypoint: ["java","-cp","app:app/lib/*","com.optimagrowth.license.LicenseServiceApplication","--spring.cloud.config.uri=http://configserver:${CONFIGSERVER_PORT}"]
     depends_on:
       database:
         condition: service_healthy

@@ -10,9 +10,10 @@ spring:
         native:
           search-locations: classpath:/config
         git:
-          uri: https://github.com/czektser/licesingserver.git
+          uri: https://github.com/ihuaylupo/config.git
           searchPaths: licensingservice
-    
+
+
 server:
   port: 8071
   
