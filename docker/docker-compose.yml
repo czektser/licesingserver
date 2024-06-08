@@ -8,6 +8,7 @@ services:
       POSTGRES_USER: "postgres"
       POSTGRES_PASSWORD: "postgres"
       POSTGRES_DB:       "ostock_dev"
+
     volumes:
         - ./init.sql:/docker-entrypoint-initdb.d/1-init.sql
         - ./data.sql:/docker-entrypoint-initdb.d/2-data.sql
@@ -21,20 +22,30 @@ services:
       timeout: 5s
       retries: 5
   configserver:
-    image: ostock/configserver:0.0.1-SNAPSHOT
+    build:
+        context: ../configserver
+        dockerfile: Dockerfile
+        args:
+          - CONFIGSERVER_PORT=8089
+          - JAR_FILE=target/configserver-0.0.1-SNAPSHOT.jar
     ports:
-       - "${PORT}:${PORT}"
+       - "${CONFIGSERVER_PORT}:${CONFIGSERVER_PORT}"
     environment:
       ENCRYPT_KEY: "fje83Ki8403Iod87dne7Yjsl3THueh48jfuO9j4U2hf64Lo"
+    entrypoint: ["java","-cp","app:app/lib/*","com.optimagrowth.configserver.ConfigurationServerApplication","-D","spring.cloud.config.uri=http://localhost:${CONFIGSERVER_PORT}"]
     networks:
       backend:
         aliases:
           - "configserver"
   licensingservice:
-    image: ostock/licensing-service:0.0.2-SNAPSHOT
+    build:
+      context: ../licensing-service
+      dockerfile: Dockerfile
+      args:
+        - JAR_FILE=target/licensing-service-0.0.2-SNAPSHOT.jar
     environment:
       PROFILE: "dev"
-      CONFIGSERVER_URI: "http://configserver:8071"
+      CONFIGSERVER_URI: "http://configserver:${CONFIGSERVER_PORT}"
       CONFIGSERVER_PORT:   "${CONFIGSERVER_PORT}"
       DATABASESERVER_PORT: "5432"
       ENCRYPT_KEY:       "IMSYMMETRIC"
